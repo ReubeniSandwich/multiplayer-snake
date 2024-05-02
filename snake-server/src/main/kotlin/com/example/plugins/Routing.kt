@@ -8,16 +8,12 @@ import io.ktor.server.resources.Resources
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
+import java.io.File
 
 fun Application.configureRouting() {
     install(Resources)
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-        // Static plugin. Try to access `/static/index.html`
-        static("/static") {
-            resources("static")
+        staticFiles("/", dir = File(System.getenv("UI_DIR") ?: "static")) {
         }
         get<Articles> { article ->
             // Get all articles ...
