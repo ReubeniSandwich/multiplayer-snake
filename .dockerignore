@@ -1,0 +1,69 @@
+# flyctl launch added from snake-multiplayer-frontend/.gitignore
+# Logs
+snake-multiplayer-frontend/**/logs
+snake-multiplayer-frontend/**/*.log
+snake-multiplayer-frontend/**/npm-debug.log*
+snake-multiplayer-frontend/**/yarn-debug.log*
+snake-multiplayer-frontend/**/yarn-error.log*
+snake-multiplayer-frontend/**/pnpm-debug.log*
+snake-multiplayer-frontend/**/lerna-debug.log*
+
+snake-multiplayer-frontend/**/node_modules
+snake-multiplayer-frontend/**/dist
+snake-multiplayer-frontend/**/dist-ssr
+snake-multiplayer-frontend/**/*.local
+
+# Editor directories and files
+snake-multiplayer-frontend/**/.vscode/*
+!snake-multiplayer-frontend/**/.vscode/extensions.json
+snake-multiplayer-frontend/**/.idea
+snake-multiplayer-frontend/**/.DS_Store
+snake-multiplayer-frontend/**/*.suo
+snake-multiplayer-frontend/**/*.ntvs*
+snake-multiplayer-frontend/**/*.njsproj
+snake-multiplayer-frontend/**/*.sln
+snake-multiplayer-frontend/**/*.sw?
+
+# flyctl launch added from snake-server/.gitignore
+snake-server/**/.gradle
+snake-server/**/build
+!snake-server/**/gradle/wrapper/gradle-wrapper.jar
+!snake-server/**/**/src/main/**/build
+!snake-server/**/**/src/test/**/build
+
+### STS ###
+snake-server/**/.apt_generated
+snake-server/**/.classpath
+snake-server/**/.factorypath
+snake-server/**/.project
+snake-server/**/.settings
+snake-server/**/.springBeans
+snake-server/**/.sts4-cache
+snake-server/**/bin
+!snake-server/**/**/src/main/**/bin
+!snake-server/**/**/src/test/**/bin
+
+### IntelliJ IDEA ###
+snake-server/**/.idea
+snake-server/**/*.iws
+snake-server/**/*.iml
+snake-server/**/*.ipr
+snake-server/**/out
+!snake-server/**/**/src/main/**/out
+!snake-server/**/**/src/test/**/out
+
+### NetBeans ###
+snake-server/nbproject/private
+snake-server/nbbuild
+snake-server/dist
+snake-server/nbdist
+snake-server/.nb-gradle
+
+### VS Code ###
+snake-server/**/.vscode
+
+# flyctl launch added from snake-server/.idea/.gitignore
+# Default ignored files
+snake-server/.idea/shelf
+snake-server/.idea/workspace.xml
+fly.toml
