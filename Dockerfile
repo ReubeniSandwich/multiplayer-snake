@@ -14,5 +14,6 @@ COPY --from=1 /app/build/libs/com.example.snake-server-all.jar /app/snake-server
 COPY --from=0 /ui/dist /app/ui
 ENV UI_DIR=/app/ui
 
+EXPOSE 8080
 WORKDIR app
 CMD java -jar snake-server.jar
