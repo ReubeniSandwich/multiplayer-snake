@@ -94,3 +94,10 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/*TODO BETTER WAY OF BEING ABLE TO STACK CANVAS ONTOP OF EACHOTHER*/
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
