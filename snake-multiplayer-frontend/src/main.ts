@@ -56,10 +56,12 @@ const body: BodyPart = {x: 40, y: 40}
 const body2: BodyPart = {x: 80, y: 40}
 const body3: BodyPart = {x: 120, y: 40}
 const body4: BodyPart = {x: 160, y: 40}
+const body5: BodyPart = {x: 200, y: 40}
 snakey.body.push(body)
 snakey.body.push(body2)
 snakey.body.push(body3)
 snakey.body.push(body4)
+snakey.body.push(body5)
 
 const abody: BodyPart = {x: 40, y: 120}
 const bbody2: BodyPart = {x: 80, y: 120}
@@ -86,15 +88,27 @@ var direction: Direction = Direction.RIGHT
 document.addEventListener("keydown", function (event) {
     switch (event.key) {
         case "ArrowLeft":
+            if (direction == Direction.RIGHT) {
+                break;
+            }
             direction = Direction.LEFT
             break;
         case "ArrowRight":
+            if (direction == Direction.LEFT) {
+                break;
+            }
             direction = Direction.RIGHT
             break;
         case "ArrowUp":
+            if (direction == Direction.DOWN) {
+                break;
+            }
             direction = Direction.UP
             break;
         case "ArrowDown":
+            if (direction == Direction.UP) {
+                break;
+            }
             direction = Direction.DOWN
             break;
     }
