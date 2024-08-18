@@ -50,6 +50,7 @@ for (let i = 0; i < board_size; i += grid_size) {
 }
 
 const snakey: Snake = {name: "reuben", body: []}
+const snakey2: Snake = {name: "reuben", body: []}
 
 const body: BodyPart = {x: 40, y: 40}
 const body2: BodyPart = {x: 80, y: 40}
@@ -59,6 +60,20 @@ snakey.body.push(body)
 snakey.body.push(body2)
 snakey.body.push(body3)
 snakey.body.push(body4)
+
+const abody: BodyPart = {x: 40, y: 120}
+const bbody2: BodyPart = {x: 80, y: 120}
+const cbody3: BodyPart = {x: 120, y: 120}
+const dbody4: BodyPart = {x: 160, y: 120}
+snakey2.body.push(abody)
+snakey2.body.push(bbody2)
+snakey2.body.push(cbody3)
+snakey2.body.push(dbody4)
+
+
+let snakeList: Snake[] = [];
+snakeList.push(snakey)
+snakeList.push(snakey2)
 
 
 enum Direction {
@@ -85,7 +100,7 @@ document.addEventListener("keydown", function (event) {
     }
 })
 
-drawSnake(ctx, snakey)
+// drawSnake(ctx, snakey)
 
 // moveSnake(ctx, 40, 40)
 
@@ -94,18 +109,20 @@ drawSnake(ctx, snakey)
 //     ctx.fillRect(x, y, 40, 40);
 // }
 
-function drawSnake(ctx: CanvasRenderingContext2D, snake: Snake): any {
-    for (let i = 0; i < snake.body.length; i += 1) {
-        const bodyPart: BodyPart = snake.body[i];
-        ctx.fillStyle = "rgb(100 0 200 / 50%)";
-        ctx.fillRect(bodyPart.x, bodyPart.y, 40, 40);
+function drawSnake(ctx: CanvasRenderingContext2D, snakeList: Snake[]): any {
+    for(const snake of snakeList) {
+        for (let i = 0; i < snake.body.length; i += 1) {
+            const bodyPart: BodyPart = snake.body[i];
+            ctx.fillStyle = "rgb(100 0 200 / 50%)";
+            ctx.fillRect(bodyPart.x, bodyPart.y, 40, 40);
+        }
     }
 }
 
 //todo bug where going left when its going right will make bad behaviro.
 // disable left when alreeady going right and vice versa. same for up down.
 
-function moveSnakeBody(snake: Snake, direction: Direction): any {
+function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
 
     let bodyX = 0
     let bodyY = 0
@@ -127,20 +144,23 @@ function moveSnakeBody(snake: Snake, direction: Direction): any {
             bodyY = 40
     }
 
-    let snakeHead: BodyPart = snake.body[0]
-    let prevBodyPosition: BodyPart = snake.body[0]
-    snakeHead.x += bodyX
-    snakeHead.y += bodyY
-    // this is bad very bad lol
-    // why snake length looks like 3 despite body of 4?
-    for (let i = 0; i < snake.body.length; i += 1) {
 
-        const temp = structuredClone(snake.body[i])
-        const bodyPart: BodyPart = snake.body[i];
-        bodyPart.x = prevBodyPosition.x
-        bodyPart.y = prevBodyPosition.y
+    for(const snake of snakeList) {
+        let snakeHead: BodyPart = snake.body[0]
+        let prevBodyPosition: BodyPart = snake.body[0]
+        snakeHead.x += bodyX
+        snakeHead.y += bodyY
+        // this is bad very bad lol
+        // why snake length looks like 3 despite body of 4?
+        for (let i = 0; i < snake.body.length; i += 1) {
 
-        prevBodyPosition = temp
+            const temp = structuredClone(snake.body[i])
+            const bodyPart: BodyPart = snake.body[i];
+            bodyPart.x = prevBodyPosition.x
+            bodyPart.y = prevBodyPosition.y
+
+            prevBodyPosition = temp
+        }
     }
 }
 
@@ -154,8 +174,8 @@ function sleep (time: number) {
 while (true) {
     console.log("testing");
     ctx.clearRect(0, 0, board_size, board_size);
-    moveSnakeBody(snakey, direction)
-    drawSnake(ctx, snakey)
+    moveSnakeBody(snakeList, direction)
+    drawSnake(ctx, snakeList)
     await sleep(100)
 }
 
