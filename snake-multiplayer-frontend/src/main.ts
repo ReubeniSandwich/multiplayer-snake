@@ -86,7 +86,7 @@ snakeList.push(snakey2)
 
 
 // bug users can switch very fast ... up left down... which can allow for illegal directions
-var direction: Direction = Direction.RIGHT
+let direction: Direction = Direction.RIGHT
 document.addEventListener("keydown", function (event) {
     switch (event.key) {
         case "ArrowLeft":
@@ -246,7 +246,7 @@ function checkSnakeBoundaries(snakeList: Snake[]) {
     }
 }
 
-var mainFruit: Fruit = { name: "cherry", x: 120, y: 240}
+let mainFruit: Fruit = {name: "cherry", x: 120, y: 240};
 
 function appendNewSnakeBodyPart(snake: Snake) {
     let xPrev = snake.body[snake.body.length -1].x
@@ -255,8 +255,8 @@ function appendNewSnakeBodyPart(snake: Snake) {
     let {bodyX, bodyY} = getSnakeDirection(direction);
 
     let newBodyPart = {
-        x: xPrev += bodyX,
-        y: yPrev += bodyY,
+        x: xPrev + bodyX,
+        y: yPrev + bodyY,
         color: snake.body[snake.body.length -1].color,
     }
 
