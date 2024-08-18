@@ -1,7 +1,9 @@
 
 interface Snake {
     name: string;
-    body: BodyPart[]
+    id: number;
+    color: number;
+    body: BodyPart[];
 }
 
 interface BodyPart {

@@ -49,28 +49,30 @@ for (let i = 0; i < board_size; i += grid_size) {
     ctxGrid.fillRect(0, i, board_size, grid_line_size)
 }
 
-const snakey: Snake = {name: "reuben", body: []}
-const snakey2: Snake = {name: "bob", body: []}
+const snakey: Snake = {name: "reuben", id: 1, color: 200, body: []}
+const snakey2: Snake = {name: "bob", id: 2, color: 100, body: []}
 
-const body: BodyPart = {x: 40, y: 40}
-const body2: BodyPart = {x: 80, y: 40}
-const body3: BodyPart = {x: 120, y: 40}
-const body4: BodyPart = {x: 160, y: 40}
-const body5: BodyPart = {x: 200, y: 40}
+const body6: BodyPart = {x: 40, y: 40}
+const body5: BodyPart = {x: 80, y: 40}
+const body4: BodyPart = {x: 120, y: 40}
+const body3: BodyPart = {x: 160, y: 40}
+const body2: BodyPart = {x: 200, y: 40}
+const body: BodyPart = {x: 240, y: 40}
 snakey.body.push(body)
 snakey.body.push(body2)
 snakey.body.push(body3)
 snakey.body.push(body4)
 snakey.body.push(body5)
+snakey.body.push(body6)
 
-const abody: BodyPart = {x: 40, y: 120}
-const bbody2: BodyPart = {x: 80, y: 120}
-const cbody3: BodyPart = {x: 120, y: 120}
-const dbody4: BodyPart = {x: 160, y: 120}
-snakey2.body.push(abody)
-snakey2.body.push(bbody2)
-snakey2.body.push(cbody3)
-snakey2.body.push(dbody4)
+const abody4: BodyPart = {x: 40, y: 120}
+const bbody3: BodyPart = {x: 80, y: 120}
+const cbody2: BodyPart = {x: 120, y: 120}
+const dbody1: BodyPart = {x: 160, y: 120}
+snakey2.body.push(dbody1)
+snakey2.body.push(cbody2)
+snakey2.body.push(bbody3)
+snakey2.body.push(abody4)
 
 
 let snakeList: Snake[] = [];
@@ -82,8 +84,7 @@ enum Direction {
     LEFT, RIGHT, DOWN, UP
 }
 
-//sorta works lol... doesn't delete the current snake block
-// TODO block bad directions
+// bug users can switch very fast ... up left down... which can allow for illegal directions
 var direction: Direction = Direction.RIGHT
 document.addEventListener("keydown", function (event) {
     switch (event.key) {
@@ -127,7 +128,9 @@ function drawSnake(ctx: CanvasRenderingContext2D, snakeList: Snake[]): any {
     for(const snake of snakeList) {
         for (let i = 0; i < snake.body.length; i += 1) {
             const bodyPart: BodyPart = snake.body[i];
-            ctx.fillStyle = "rgb(100 0 200 / 50%)";
+            let color = `rgb(${snake.color} 0 200 / 50)`
+            ctx.fillStyle = color;
+            // ctx.fillStyle = "rgb(200 0 200 / 50%)";
             ctx.fillRect(bodyPart.x, bodyPart.y, 40, 40);
         }
     }
@@ -161,12 +164,14 @@ function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
 
     for(const snake of snakeList) {
         let snakeHead: BodyPart = snake.body[0]
-        let prevBodyPosition: BodyPart = snake.body[0]
+        const xte = snake.body[0].x
+        const yte = snake.body[0].y
+        let prevBodyPosition: BodyPart = {x: xte, y: yte}
         snakeHead.x += bodyX
         snakeHead.y += bodyY
         // this is bad very bad lol
         // why snake length looks like 3 despite body of 4?
-        for (let i = 0; i < snake.body.length; i += 1) {
+        for (let i = 1; i < snake.body.length; i += 1) {
 
             const temp = structuredClone(snake.body[i])
             const bodyPart: BodyPart = snake.body[i];
@@ -174,6 +179,7 @@ function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
             bodyPart.y = prevBodyPosition.y
 
             prevBodyPosition = temp
+            console.log(snake)
         }
     }
 }
@@ -189,7 +195,7 @@ function killSnake(deleteSnake: Snake) {
     snakeList = snakeList.filter(snake => snake.name !== deleteSnake.name );
 }
 
-function checkBoundaries(snakeList: Snake[]) {
+function checkWallBoundaries(snakeList: Snake[]) {
     for (const snake of snakeList) {
         const snakeHead: BodyPart = snake.body[0]
         if (snakeHead.x >= board_size || snakeHead.x < 0) {
@@ -202,12 +208,49 @@ function checkBoundaries(snakeList: Snake[]) {
     }
 }
 
+function checkSnakeBoundaries(snakeList: Snake[]) {
+    for (const currentSnake of snakeList) {
+        const currentSnakeHead = currentSnake.body[0];
+
+        // ignore snake head ... set i to 1
+        for (let i = 1; i < currentSnake.body.length; i++) {
+            if (currentSnakeHead.x === currentSnake.body[i].x && currentSnakeHead.y === currentSnake.body[i].y) {
+                killSnake(currentSnake);
+            }
+        }
+
+        const otherSnakes: Snake[] = snakeList.filter(snake => snake.id !== currentSnake.id )
+        const bodyLocationsX: Set<number> = new Set();
+        const bodyLocationsY: Set<number> = new Set();
+
+        for (const otherSnake of otherSnakes) {
+            for (const body of otherSnake.body) {
+                bodyLocationsX.add(body.x)
+                bodyLocationsY.add(body.y)
+            }
+
+        }
+
+        if (bodyLocationsX.has(currentSnakeHead.x) && bodyLocationsY.has(currentSnakeHead.y)) {
+            console.log("snake is ded")
+            killSnake(currentSnake);
+        }
+        // I could use a map and check if any map value has a value of more than 1... but then I lose track of WHO hit someone.\
+        // Maybe not so... I only need to keep track of the heads.
+        // I don't kill both parties, I only kill the heads... so I could create a map of all values, and then from that map check the values of heads to see if there is a collision.
+        // not sure yet...
+        // it's probably fast enough as is... It should be fine for me to brute force it.
+    }
+}
+
+// await sleep(1000)
 // Order matters
 while (true) {
     console.log("testing");
     ctx.clearRect(0, 0, board_size, board_size);
     moveSnakeBody(snakeList, direction)
-    checkBoundaries(snakeList)
+    checkWallBoundaries(snakeList)
+    checkSnakeBoundaries(snakeList)
     drawSnake(ctx, snakeList)
     await sleep(100)
 }
