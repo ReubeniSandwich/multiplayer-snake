@@ -50,7 +50,7 @@ for (let i = 0; i < board_size; i += grid_size) {
 }
 
 const snakey: Snake = {name: "reuben", body: []}
-const snakey2: Snake = {name: "reuben", body: []}
+const snakey2: Snake = {name: "bob", body: []}
 
 const body: BodyPart = {x: 40, y: 40}
 const body2: BodyPart = {x: 80, y: 40}
@@ -171,10 +171,29 @@ function sleep (time: number) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+function killSnake(deleteSnake: Snake) {
+    snakeList = snakeList.filter(snake => snake.name !== deleteSnake.name );
+}
+
+function checkBoundaries(snakeList: Snake[]) {
+    for (const snake of snakeList) {
+        const snakeHead: BodyPart = snake.body[0]
+        if (snakeHead.x >= board_size || snakeHead.x < 0) {
+            killSnake(snake)
+        }
+
+        if (snakeHead.y >= board_size || snakeHead.y < 0) {
+            killSnake(snake)
+        }
+    }
+}
+
+// Order matters
 while (true) {
     console.log("testing");
     ctx.clearRect(0, 0, board_size, board_size);
     moveSnakeBody(snakeList, direction)
+    checkBoundaries(snakeList)
     drawSnake(ctx, snakeList)
     await sleep(100)
 }
