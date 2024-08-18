@@ -2,6 +2,7 @@ import './style.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import {Direction, Snake, ColorRgba, BodyPart} from "./Snake.ts";
+import {Fruit} from "./Fruit.ts";
 // import { setupCounter } from './counter.ts'
 
 const board_size = 600
@@ -137,8 +138,7 @@ function drawSnake(ctx: CanvasRenderingContext2D, snakeList: Snake[]): any {
 //todo bug where going left when its going right will make bad behaviro.
 // disable left when alreeady going right and vice versa. same for up down.
 
-function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
-
+function getSnakeDirection(direction: Direction) {
     let bodyX = 0
     let bodyY = 0
     switch (direction) {
@@ -158,6 +158,11 @@ function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
             bodyX = 0
             bodyY = 40
     }
+    return {bodyX, bodyY};
+}
+
+function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
+    let {bodyX, bodyY} = getSnakeDirection(direction);
 
 
     for(const snake of snakeList) {
@@ -178,7 +183,6 @@ function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
             bodyPart.y = prevBodyPosition.y
 
             prevBodyPosition = temp
-            console.log(snake)
         }
     }
 }
@@ -242,15 +246,90 @@ function checkSnakeBoundaries(snakeList: Snake[]) {
     }
 }
 
-// await sleep(1000)
+var mainFruit: Fruit = { name: "cherry", x: 120, y: 240}
+
+function appendNewSnakeBodyPart(snake: Snake) {
+    let xPrev = snake.body[snake.body.length -1].x
+    let yPrev = snake.body[snake.body.length -1].y
+
+    let {bodyX, bodyY} = getSnakeDirection(direction);
+
+    let newBodyPart = {
+        x: xPrev += bodyX,
+        y: yPrev += bodyY,
+        color: snake.body[snake.body.length -1].color,
+    }
+
+    snake.body.push(newBodyPart)
+}
+
+interface Coordinates {
+    x: number;
+    y: number;
+}
+
+function updateFruitLocation(snakeList: Snake[]) {
+    const illegalCoordinatesX: Set<number> = new Set();
+    const illegalCoordinatesY: Set<number> = new Set();
+
+    for (const snake of snakeList) {
+        snake.body.forEach(bodyPart => {
+            illegalCoordinatesX.add(bodyPart.x)
+            illegalCoordinatesY.add(bodyPart.y)
+        });
+    }
+
+    let fruitCoordinates: Coordinates = getRandomCoordinates(board_size, grid_size)
+    while (illegalCoordinatesX.has(fruitCoordinates.x) && illegalCoordinatesY.has(fruitCoordinates.y)) {
+        fruitCoordinates = getRandomCoordinates(board_size, grid_size)
+    }
+
+    console.log("coords")
+    console.log(illegalCoordinatesX, illegalCoordinatesY, fruitCoordinates)
+
+    mainFruit = {name: mainFruit.name, x: fruitCoordinates.x, y: fruitCoordinates.y};
+}
+
+// todo ensure the division is a even number
+function getRandomCoordinates(boardSize: number, gridSize: number): Coordinates {
+    let randomNumberRange: number = boardSize / gridSize;
+    let xCoordinate = (Math.floor(Math.random() * randomNumberRange) * gridSize);
+    let yCoordinate = (Math.floor(Math.random() * randomNumberRange) * gridSize);
+
+    console.log(xCoordinate, yCoordinate);
+
+    return {
+        x: xCoordinate,
+        y: yCoordinate
+    }
+}
+
+function checkFruit(snakeList: Snake[]) {
+
+    // Only snake head matters
+    for (const snake of snakeList) {
+        let snakeHead = snake.body[0];
+        if (snakeHead.x == mainFruit.x && snakeHead.y == mainFruit.y) {
+            appendNewSnakeBodyPart(snake)
+            updateFruitLocation(snakeList)
+        }
+    }
+}
+
+function renderFruit(ctx: CanvasRenderingContext2D, mainFruit: Fruit) {
+    ctx.fillStyle = "rgb(350 0 0)";
+    ctx.fillRect(mainFruit.x, mainFruit.y, 40, 40);
+}
+
 // Order matters
 while (true) {
-    console.log("testing");
     ctx.clearRect(0, 0, board_size, board_size);
     moveSnakeBody(snakeList, direction)
     checkWallBoundaries(snakeList)
     checkSnakeBoundaries(snakeList)
     drawSnake(ctx, snakeList)
+    checkFruit(snakeList)
+    renderFruit(ctx, mainFruit)
     await sleep(100)
 }
 
