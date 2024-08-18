@@ -1,6 +1,7 @@
 import './style.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
+import {Direction, Snake, ColorRgba, BodyPart} from "./Snake.ts";
 // import { setupCounter } from './counter.ts'
 
 const board_size = 600
@@ -49,15 +50,18 @@ for (let i = 0; i < board_size; i += grid_size) {
     ctxGrid.fillRect(0, i, board_size, grid_line_size)
 }
 
-const snakey: Snake = {name: "reuben", id: 1, color: 200, body: []}
-const snakey2: Snake = {name: "bob", id: 2, color: 100, body: []}
+const snakey: Snake = {name: "reuben", id: 1, facingDirection: Direction.RIGHT, body: []}
+const snakey2: Snake = {name: "bob", id: 2, facingDirection: Direction.RIGHT, body: []}
 
-const body6: BodyPart = {x: 40, y: 40}
-const body5: BodyPart = {x: 80, y: 40}
-const body4: BodyPart = {x: 120, y: 40}
-const body3: BodyPart = {x: 160, y: 40}
-const body2: BodyPart = {x: 200, y: 40}
-const body: BodyPart = {x: 240, y: 40}
+let color1: ColorRgba = {red: 100, green: 0, blue: 100, opacity: 90}
+let color2: ColorRgba = {red: 300, green: 0, blue: 200, opacity: 90}
+
+const body6: BodyPart = {x: 40, y: 40, color: color1}
+const body5: BodyPart = {x: 80, y: 40, color: color1}
+const body4: BodyPart = {x: 120, y: 40, color: color1}
+const body3: BodyPart = {x: 160, y: 40, color: color1}
+const body2: BodyPart = {x: 200, y: 40, color: color1}
+const body: BodyPart = {x: 240, y: 40, color: color1}
 snakey.body.push(body)
 snakey.body.push(body2)
 snakey.body.push(body3)
@@ -65,10 +69,10 @@ snakey.body.push(body4)
 snakey.body.push(body5)
 snakey.body.push(body6)
 
-const abody4: BodyPart = {x: 40, y: 120}
-const bbody3: BodyPart = {x: 80, y: 120}
-const cbody2: BodyPart = {x: 120, y: 120}
-const dbody1: BodyPart = {x: 160, y: 120}
+const abody4: BodyPart = {x: 40, y: 120, color: color2}
+const bbody3: BodyPart = {x: 80, y: 120, color: color2}
+const cbody2: BodyPart = {x: 120, y: 120, color: color2}
+const dbody1: BodyPart = {x: 160, y: 120, color: color2}
 snakey2.body.push(dbody1)
 snakey2.body.push(cbody2)
 snakey2.body.push(bbody3)
@@ -79,10 +83,6 @@ let snakeList: Snake[] = [];
 snakeList.push(snakey)
 snakeList.push(snakey2)
 
-
-enum Direction {
-    LEFT, RIGHT, DOWN, UP
-}
 
 // bug users can switch very fast ... up left down... which can allow for illegal directions
 var direction: Direction = Direction.RIGHT
@@ -128,9 +128,7 @@ function drawSnake(ctx: CanvasRenderingContext2D, snakeList: Snake[]): any {
     for(const snake of snakeList) {
         for (let i = 0; i < snake.body.length; i += 1) {
             const bodyPart: BodyPart = snake.body[i];
-            let color = `rgb(${snake.color} 0 200 / 50)`
-            ctx.fillStyle = color;
-            // ctx.fillStyle = "rgb(200 0 200 / 50%)";
+            ctx.fillStyle = `rgb(${bodyPart.color.red} ${bodyPart.color.green} ${bodyPart.color.blue} / ${bodyPart.color.opacity}%)`;
             ctx.fillRect(bodyPart.x, bodyPart.y, 40, 40);
         }
     }
@@ -166,7 +164,8 @@ function moveSnakeBody(snakeList: Snake[], direction: Direction): any {
         let snakeHead: BodyPart = snake.body[0]
         const xte = snake.body[0].x
         const yte = snake.body[0].y
-        let prevBodyPosition: BodyPart = {x: xte, y: yte}
+        const color = snake.body[0].color
+        let prevBodyPosition: BodyPart = {x: xte, y: yte, color: color}
         snakeHead.x += bodyX
         snakeHead.y += bodyY
         // this is bad very bad lol
